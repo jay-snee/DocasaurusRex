@@ -59,4 +59,15 @@ describe DocRex do
     end
   end
   
+  it 'has a document_url in the response' do
+    with_api(DocRex) do
+      post_request({:path => "/receive_data", :body => payload}, err) do |c|
+        resp = JSON.parse(c.response)
+        resp["document_url"].should == "http://my.doc.url"
+        resp["document_url"].length.should > 0
+      end
+    end
+  end
+  
+  
 end

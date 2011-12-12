@@ -7,6 +7,7 @@ require 'em-synchrony/em-http'
 Dir[File.expand_path(File.join(File.dirname(__FILE__), "lib/*.rb"))].each {|file| require file }
 
 class DocRex < Goliath::API
+  use ::Rack::Reloader, 0 
   
   post "/receive_data", ReceiveData
   

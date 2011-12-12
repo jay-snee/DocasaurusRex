@@ -15,7 +15,8 @@ class ReceiveData < Goliath::API
   def response(env)
     report = Report.new(env['rack.input'].read)
     if report.valid_data?
-      [200, {}, "#{report.payload}"]
+      report.generate_url
+      [200, {}, "#{report.payload.to_json}"]
     else
       [500, {}, "No data"]
     end
