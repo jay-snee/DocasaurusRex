@@ -1,30 +1,24 @@
 ##!/usr/bin/env ruby
-#require 'rubygems'
-#require 'goliath'
-#
-#
+
+########################################
+# ReceiveData Goliath API
+# Handles the collection of data and manufacture of 
+# Report objects
+########################################
+
+
 class ReceiveData < Goliath::API
   use Goliath::Rack::Params
   
-  attr_accessor :data 
+  attr_accessor :payload 
 
   def response(env)
-    # Pick up the request body
-    @data = env['rack.input'].read
-    
-    if validate_data(@data)
-      [200, {}, "data: #{@data}"]
+    report = Report.new(env['rack.input'].read)
+    if report.valid_data?
+      [200, {}, "#{report.payload}"]
     else
       [500, {}, "No data"]
     end
   end
-  
-  def validate_data(data)
-    if @data.length > 0
-      return true
-    else
-      return false
-    end
-  end
-  
+
 end

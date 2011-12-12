@@ -19,9 +19,23 @@ describe DocRex do
     end
   end
   
+  ########
+  # receive_data specs - this api should receive data and act on it accordingly
+  ########
+  
+  # Sample document structure
+  payload = {
+    :document_url => "",
+    :title => "My Title",
+    :section => {
+      :section_title => "Section Title",
+      :section_body => "body"
+    }
+  }.to_json
+
   it 'responds on /receive_data' do
     with_api(DocRex) do
-      post_request({:body => "some data", :path => "/receive_data"}, err) do |c|
+      post_request({:body => payload, :path => "/receive_data"}, err) do |c|
         c.response_header.status.should == 200
       end
     end
@@ -29,16 +43,18 @@ describe DocRex do
   
   it 'returns data from /receive_data' do
     with_api(DocRex) do
-      post_request({:body => "jimbob", :path => "/receive_data"}, err) do |c|
-        c.response.should == "data: jimbob"
+      post_request({:body => payload, :path => "/receive_data"}, err) do |c|
+        resp = JSON.parse(c.response)
+        resp["title"].should == "My Title"
       end
     end
   end
   
-  it 'should fail /receive_data if no data is sent' do
+  it 'fails /receive_data if no data is sent' do
     with_api(DocRex) do
       post_request({:path => "/receive_data"}, err) do |c|
         c.response_header.status.should == 500
+        c.response.should == "No data"
       end
     end
   end
